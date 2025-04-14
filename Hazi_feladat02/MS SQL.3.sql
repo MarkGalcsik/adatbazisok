@@ -1,0 +1,9 @@
+INSERT INTO ugyfel_maszkolt (LOGIN, NEV, EMAIL, SZULEV, NEM, CIM)
+SELECT
+  LOGIN,
+  NEV,
+  EMAIL,
+  SZULEV,
+  NEM,
+  CIM
+FROM ugyfel;

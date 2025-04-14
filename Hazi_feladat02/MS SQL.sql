@@ -1,0 +1,9 @@
+INSERT INTO ugyfel_maszkolt (LOGIN, NEV, EMAIL, SZULEV, NEM, CIM)
+SELECT
+  LOGIN,
+  'Anonim_' + CAST(ABS(CHECKSUM(NEWID())) % 10000 AS NVARCHAR),
+  LEFT(EMAIL, 1) + '***@' + RIGHT(EMAIL, LEN(EMAIL) - CHARINDEX('@', EMAIL)),
+  SZULEV,
+  NEM,
+  LEFT(CIM, CHARINDEX(',', CIM)) + ' ****'ugyfel_maszkolt
+FROM ugyfel;
