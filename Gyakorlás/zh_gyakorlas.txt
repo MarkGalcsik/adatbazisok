@@ -7,39 +7,64 @@ db["movies"].find({$and: [{"genres": {$in: ["Short"]}}, {"$and": [{"year": {$gte
 3.feladat
 db.movies.aggregate([{$match: {runtime: { $gte: 50, $lte: 100 }}},{$group: {_id: "$year", avg_mflix_comments: { $avg:"$num_mflix_comments" }}},{$project: {year: "$_id", avg_mflix_comments: 1, _id: 0}},{$sort: { year: 1 }}])
 
-4.feladat
+4.
+db["movies"].aggregate([{$unwind: "$genres"}, {$group: {_id: "$genres", avgRating: {$avg: "$imdb.rating"}}}])
+
+5.
+db["movies"].find({"title": {$regex: /Love/i}}, {"title": 1, "year": 1, "genres":1, "_id": 0})
+
+6.
+db["movies"].find({"title": {$regex: /^The/}}, {"title": 1}).sort({"year": -1})
+
+7.
+db.movies.aggregate([{$project: {title: 1, runtime: 1, lengthCategory: {$cond: { if: { $gte: ["$runtime", 90] }, then: "hosszú", else: "rövid" }}}}])
+
+NEO4J:
+1.
+MATCH(m:Movie)
+WHERE m.title CONTAINS 'The' AND m.released > 1990
+RETURN m.title, m.released
+
+2.
+MATCH(p:Person) - [:ACTED_IN] -> (m:Movie)
+WHERE p.name = 'Tom Hanks'
+RETURN p.name, COUNT(m)
+
+VAGY
+
+MATCH(p:Person {name: 'Tom Hanks'}) - [:ACTED_IN] -> (m:Movie)
+RETURN p.name, COUNT(m)
+
+3.
+MATCH(p:Person) - [:ACTED_IN] ->(m:Movie)
+WITH p.name AS Nev, COUNT(m) AS Szam
+WHERE Szam >=3
+RETURN Nev, Szam
+
+4.
+MATCH(m:Movie)
+RETURN m.title,
+    CASE 
+        WHEN m.released < 2000 THEN 'Régi'
+         ELSE 'Új' 
+    END AS Kategoria
+
+5.feladat
 MATCH (p:Person) -[:ACTED_IN] -> (m:Movie)
 WITH p.name AS nev, m.title AS cím, m.released AS megjelenés
 WHERE megjelenés > 1960
 RETURN nev, cím, megjelenés
 ORDER BY megjelenés DESC
 
-5.feladat
+6.feladat
 MATCH (p:Person) -[:ACTED_IN] -> (m:Movie)
 WITH p.name AS nev, m.title AS cím, m.released AS megjelenés
 WHERE megjelenés > 1970 OR cím CONTAINS "Love"
 RETURN nev, cím
 ORDER BY cím DESC
 
-6.feladat
+7.feladat
 MATCH (p:Person) -[:ACTED_IN] -> (m:Movie)
 RETURN m.title, COUNT(p.name)
 ORDER BY COUNT(p.name) DESC
 LIMIT 1
-
-PlUSSZ FELADATOK:
-MONGODB:
-1.
-db["movies"].aggregate([{$unwind: "$genres"}, {$group: {_id: "$genres", avgRating: {$avg: "$imdb.rating"}}}])
-
-2.
-db["movies"].find({"title": {$regex: /Love/i}}, {"title": 1, "year": 1, "genres":1, "_id": 0})
-
-3.
-db["movies"].find({"title": {$regex: /^The/}}, {"title": 1}).sort({"year": -1})
-
-4.
-db.movies.aggregate([{$project: {title: 1, runtime: 1, lengthCategory: {$cond: { if: { $gte: ["$runtime", 90] }, then: "hosszú", else: "rövid" }}}}])
-
-5.
-
