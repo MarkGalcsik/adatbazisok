@@ -68,3 +68,35 @@ MATCH (p:Person) -[:ACTED_IN] -> (m:Movie)
 RETURN m.title, COUNT(p.name)
 ORDER BY COUNT(p.name) DESC
 LIMIT 1
+
+REDIS
+1. 
+SET ev 2021 EX 10
+SET honap 4 EX 10
+SET nap 26 EX 10
+
+GET ev/honap/nap //Lekérdezés
+
+2.
+HSET auto rendszam "xxx-111" tipus "Skoda Fabia" evjarat 2012 ertek 1500000
+
+HGETALL auto //Lekérdezés
+
+3.
+RPUSH tantargyak "programozas alapjai" "matematika" "adatbaziskezeles"
+RPUSH tantargyak "operacios rendszerek"
+
+LRANGE tantargyak 0 1
+
+4.
+SADD numbers1 10 20 30 40 50 60
+SADD numbers2 15 30 45 60
+SINTER numbers1 numbers2
+
+5.
+ZADD szemelyek 15 Andras 20 Peter 18 Julia
+
+ZCOUNT 16 18
+ZRANGEBYSCORE 16 18 // Lekérdezés
+
+6.
