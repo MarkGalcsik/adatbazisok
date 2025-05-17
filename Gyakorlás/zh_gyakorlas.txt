@@ -26,3 +26,20 @@ MATCH (p:Person) -[:ACTED_IN] -> (m:Movie)
 RETURN m.title, COUNT(p.name)
 ORDER BY COUNT(p.name) DESC
 LIMIT 1
+
+PlUSSZ FELADATOK:
+MONGODB:
+1.
+db["movies"].aggregate([{$unwind: "$genres"}, {$group: {_id: "$genres", avgRating: {$avg: "$imdb.rating"}}}])
+
+2.
+db["movies"].find({"title": {$regex: /Love/i}}, {"title": 1, "year": 1, "genres":1, "_id": 0})
+
+3.
+db["movies"].find({"title": {$regex: /^The/}}, {"title": 1}).sort({"year": -1})
+
+4.
+db.movies.aggregate([{$project: {title: 1, runtime: 1, lengthCategory: {$cond: { if: { $gte: ["$runtime", 90] }, then: "hosszú", else: "rövid" }}}}])
+
+5.
+
