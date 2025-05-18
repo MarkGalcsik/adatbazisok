@@ -99,4 +99,29 @@ ZADD szemelyek 15 Andras 20 Peter 18 Julia
 ZCOUNT 16 18
 ZRANGEBYSCORE 16 18 // Lekérdezés
 
+CASSANDRA:
+1.
+SELECT COUNT(*) FROM movies_and_tv;
+
+2.
+SELECT title
+FROM movies_and_tv
+WHERE type = 'Moive' AND release_year = 2018
+
+3.
+SELECT type, release_year, COUNT(*) 
+         ... FROM movies_and_tv 
+         ... GROUP BY type, release_year;
+
+4.
+CREATE TABLE szemely (nev TEXT, szulev INT, foglalkozas TEXT) PRIMARY KEY((nev, szulev), foglalkozas));
+INSERT INTO szemely (nev, szulev, foglalkozas) VALUES ( 'Kiss Béla', 2000, 'lakatos');
+INSERT INTO szemely (nev, szulev, foglalkozas) VALUES ( 'Nagy Ivo', 1999, 'diák');
+INSERT INTO szemely (nev, szulev, foglalkozas) VALUES ( 'Toth Ottó', 1980, 'pincer');
+
+5.
+ALTER TABLE szemely ADD vegzettseg LIST<TEXT>;
+UPDATE Szemely set vegzettseg = vegzettseg + ['gepez', 'muszeresz'] 
+WHERE nev = 'Kis Béla' AND szulev = 2000 AND foglalkozas = 'lakatos'
+
 6.
