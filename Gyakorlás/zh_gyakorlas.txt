@@ -1,3 +1,27 @@
+SQL:
+1.
+SELECT RANK() OVER(ORDER BY COUNT(*) DESC), f.UGYFEL_FK, v.NEV, COUNT(*)
+FROM Foglalas f JOIN Venged v ON f.UGYFEL_FK = v.USERNEV
+GROUP BY f.UGYFEL_FK, v.NEV
+
+2.
+SELECT v.NEV, v.EMAIL,COUNT(*)
+FROM Foglalas f JOIN Vendeg v ON f.UGYFEL_FK = v.USERNEV
+WHERE v.SZUL_DAT NOT LIKE '%05%'
+HAVING COUNT(*) > 1
+
+3.
+SELECT v.*
+FROM Foglalas f JOIN Vendeg v ON f.UGYFEL_FK = v.USERNEV
+                JOIN Szoba sz ON f.SZOBA = sz.SZOBA_ID
+WHERE sz.FEROHELY =
+(
+    SELCT MAX(sz.FEROHELY)
+    FRROM Szoba
+    WHERE KILMAS = 'i'
+)
+
+MONGODB:
 1. feladat
 db["users"].find({"email": {$regex: /.com/i}}, {"email": 1, "name": 1, "_id": 0})
 
@@ -18,6 +42,9 @@ db["movies"].find({"title": {$regex: /^The/}}, {"title": 1}).sort({"year": -1})
 
 7.
 db.movies.aggregate([{$project: {title: 1, runtime: 1, lengthCategory: {$cond: { if: { $gte: ["$runtime", 90] }, then: "hosszú", else: "rövid" }}}}])
+
+8.
+db.["comments".aggregat([{$group: {_id:"$email", count: {$sum:1}}}, {$match: {count: {$gt: 10}}}])
 
 NEO4J:
 1.
@@ -69,6 +96,12 @@ RETURN m.title, COUNT(p.name)
 ORDER BY COUNT(p.name) DESC
 LIMIT 1
 
+8.
+MATCH(p:PERSON)
+WHERE NOT EXISTS {
+    MATCH(p) -[:ACTED_IN] -> (m.:Movie) <- [:ACTED_IN] - (p2:PERSON {name: 'Tom Hanks'})
+RETURN DISTINCT p.name
+
 REDIS
 1. 
 SET ev 2021 EX 10
@@ -99,6 +132,10 @@ ZADD szemelyek 15 Andras 20 Peter 18 Julia
 ZCOUNT 16 18
 ZRANGEBYSCORE 16 18 // Lekérdezés
 
+6.
+HMSET IRO ID 1 nev 'WHINCH ESZER' nemzetiseg 'magyar'
+HMSET KONYV ID 1 cim 'programozas' mufaj 'oktatas' IRO_ID 1
+
 CASSANDRA:
 1.
 SELECT COUNT(*) FROM movies_and_tv;
@@ -125,3 +162,4 @@ UPDATE Szemely set vegzettseg = vegzettseg + ['gepez', 'muszeresz']
 WHERE nev = 'Kis Béla' AND szulev = 2000 AND foglalkozas = 'lakatos'
 
 6.
+SELECT title FROM movies_and_tv WHERE release_year = 2010 AND type = 'Movei' ORDER BY rating DESC LIMIT 10
